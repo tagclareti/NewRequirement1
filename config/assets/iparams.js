@@ -30,10 +30,19 @@ async function validate() {
     },
   };
   try {
+    $("#domain").attr("state", "normal");
+    $("#secure_field").attr("state", "normal");
     let { status } = await client.request.get(URL, options);
     if (status == 200) return true;
   } catch (error) {
     console.error(error);
+    if (error.status === 502) {
+      $("#domain").attr("error-text", "Invalid Domain Name");
+      $("#domain").attr("state", "error");
+    } else if (error?.status === 401) {
+      $("#secure_field").attr("error-text", "Invalid API Key");
+      $("#secure_field").attr("state", "error");
+    }
     return false;
   }
 }
